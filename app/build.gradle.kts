@@ -6,18 +6,21 @@ plugins {
 
     alias(libs.plugins.gms)
     alias(libs.plugins.crashlytics)
+    //id("maven-publish")
+    //alias(libs.plugins.kotlin.jvm)
 }
 
 val gitHash = execute("git", "rev-parse", "HEAD").take(7)
 val gitCount = execute("git", "rev-list", "--count", "HEAD").toInt()
 val version = "2.0.$gitCount"
+val group = "dev.brahmkshatriya.echo"
 
 android {
-    namespace = "dev.brahmkshatriya.echo"
+    namespace = group
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "dev.brahmkshatriya.echo"
+        applicationId = group
         minSdk = 24
         targetSdk = 35
         versionCode = gitCount
@@ -52,10 +55,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
-
     androidResources {
         @Suppress("UnstableApiUsage")
         generateLocaleConfig = true
@@ -84,6 +83,32 @@ dependencies {
     "stableImplementation"(libs.bundles.firebase)
     "nightlyImplementation"(libs.bundles.firebase)
 }
+
+//publishing {
+//    publications {
+//        create<MavenPublication>("ReleaseAar") {
+//            groupId = "dev.brahmkshatriya.echo"
+//            artifactId = "app"
+//            version = "1.0"
+//
+//            artifact("${layout.buildDirectory}/outputs/aar/${artifactId}-release.aar")
+//
+//            pom {
+//                withXml {
+//                    val dependenciesNode = asNode().appendNode("dependencies")
+//                    configurations.getByName("implementation") {
+//                        dependencies.forEach {
+//                            val dependencyNode = dependenciesNode.appendNode("dependency")
+//                            dependencyNode.appendNode("groupId", it.group)
+//                            dependencyNode.appendNode("artifactId", it.name)
+//                            dependencyNode.appendNode("version", it.version)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
 fun execute(vararg command: String): String {
     val processBuilder = ProcessBuilder(*command)
